@@ -1,0 +1,82 @@
+<!--
+=============================================================
+ Event Management Website — Base Template
+ File    : templates/base.html
+ Date    : 2026-04-02
+=============================================================
+-->
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}EventHub — Event Management System{% endblock %}</title>
+    <meta name="description" content="Browse, register, and manage events with EventHub." />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <!-- ─── Navbar ─────────────────────────────────── -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="nav-logo">
+                <span class="logo-icon">🎪</span> EventHub
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('events_page') }}">Events</a></li>
+                <li><a href="{{ url_for('register') }}">Register</a></li>
+                <li><a href="{{ url_for('admin') }}">Admin</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">🌙</button>
+                <button class="mobile-menu-btn" id="menuBtn" aria-label="Menu">☰</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ─── Flash Messages ─────────────────────────── -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-container">
+        {% for cat, msg in messages %}
+        <div class="flash flash-{{ cat }}">{{ msg }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- ─── Main Content ───────────────────────────── -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- ─── Footer ─────────────────────────────────── -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <span class="logo-icon">🎪</span> EventHub
+                <p>Your one-stop platform for discovering and managing amazing events.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('events_page') }}">Events</a>
+                <a href="{{ url_for('register') }}">Register</a>
+            </div>
+            <div class="footer-links">
+                <h4>Categories</h4>
+                <a href="{{ url_for('events_page', category='Technology') }}">Technology</a>
+                <a href="{{ url_for('events_page', category='Music') }}">Music</a>
+                <a href="{{ url_for('events_page', category='Business') }}">Business</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 EventHub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

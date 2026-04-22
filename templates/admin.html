@@ -1,0 +1,168 @@
+<!--
+=============================================================
+ Event Management Website — Admin Panel
+ File    : templates/admin.html
+ Date    : 2026-04-02
+=============================================================
+-->
+{% extends "base.html" %}
+{% block title %}Admin Panel — EventHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="admin-header">
+            <h1 class="section-title">Admin Dashboard</h1>
+            <a href="{{ url_for('admin_logout') }}" class="btn btn-outline btn-sm">Logout</a>
+        </div>
+
+        <!-- Add Event Form -->
+        <div class="admin-card">
+            <h2>Add New Event</h2>
+            <form action="{{ url_for('admin_add') }}" method="POST" class="admin-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Event Name</label>
+                        <input type="text" name="name" required placeholder="Event name" />
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select name="category">
+                            <option>Technology</option><option>Music</option>
+                            <option>Business</option><option>Art</option>
+                            <option>Health</option><option>Food</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" name="date" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Time</label>
+                        <input type="time" name="time" required />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Venue</label>
+                    <input type="text" name="venue" required placeholder="Event venue" />
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" rows="3" placeholder="Event description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Image URL (optional)</label>
+                    <input type="text" name="image_url" placeholder="https://..." />
+                </div>
+                <button type="submit" class="btn btn-primary">Add Event</button>
+            </form>
+        </div>
+
+        <!-- Events Table -->
+        <div class="admin-card">
+            <h2>All Events ({{ events|length }})</h2>
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th><th>Date</th><th>Time</th>
+                            <th>Venue</th><th>Category</th><th>RSVPs</th><th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for e in events %}
+                        <tr>
+                            <td>{{ e.name }}</td>
+                            <td>{{ e.date }}</td>
+                            <td>{{ e.time }}</td>
+                            <td>{{ e.venue }}</td>
+                            <td><span class="event-category cat-{{ e.category|lower }}">{{ e.category }}</span></td>
+                            <td>{{ e.rsvp_count }}</td>
+                            <td class="action-btns">
+                                <button class="btn btn-sm btn-outline"
+                                        onclick="openEditModal('{{ e.id }}','{{ e.name }}','{{ e.date }}','{{ e.time }}','{{ e.venue }}','{{ e.description|replace("'","\\'") }}','{{ e.category }}','{{ e.image_url }}')">
+                                    Edit
+                                </button>
+                                <a href="{{ url_for('admin_delete', eid=e.id) }}" class="btn btn-sm btn-danger"
+                                   onclick="return confirm('Delete this event?')">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Registrations Table -->
+        <div class="admin-card">
+            <h2>Registrations ({{ registrations|length }})</h2>
+            <div class="table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th><th>Email</th><th>Phone</th>
+                            <th>Event</th><th>Tickets</th><th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in registrations %}
+                        <tr>
+                            <td>{{ r.full_name }}</td>
+                            <td>{{ r.email }}</td>
+                            <td>{{ r.phone }}</td>
+                            <td>{{ r.event_name }}</td>
+                            <td>{{ r.tickets }}</td>
+                            <td>{{ r.registered_at[:10] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal">
+        <h2>Edit Event</h2>
+        <form id="editForm" method="POST">
+            <div class="form-group">
+                <label>Name</label><input type="text" name="name" id="edit_name" required />
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Date</label><input type="date" name="date" id="edit_date" required />
+                </div>
+                <div class="form-group">
+                    <label>Time</label><input type="time" name="time" id="edit_time" required />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Venue</label><input type="text" name="venue" id="edit_venue" required />
+            </div>
+            <div class="form-group">
+                <label>Description</label><textarea name="description" id="edit_desc" rows="3"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="category" id="edit_category">
+                        <option>Technology</option><option>Music</option>
+                        <option>Business</option><option>Art</option>
+                        <option>Health</option><option>Food</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Image URL</label><input type="text" name="image_url" id="edit_image" />
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <button type="button" class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

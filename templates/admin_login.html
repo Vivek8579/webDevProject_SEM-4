@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Admin Login — EventHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container form-container" style="max-width:400px;">
+        <h1 class="section-title">Admin Login</h1>
+        <p class="section-subtitle">Enter the admin password to continue</p>
+        <form method="POST" class="reg-form">
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter admin password" required />
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

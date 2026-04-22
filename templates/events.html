@@ -1,0 +1,56 @@
+<!--
+=============================================================
+ Event Management Website — Events Listing
+ File    : templates/events.html
+ Date    : 2026-04-02
+=============================================================
+-->
+{% extends "base.html" %}
+{% block title %}Events — EventHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="section-title">All Events</h1>
+        <p class="section-subtitle">Browse and filter events by category or keyword</p>
+
+        <!-- Search & Filter Bar -->
+        <div class="filter-bar">
+            <input type="text" id="searchInput" class="search-input"
+                   placeholder="Search events..." value="{{ search_query }}" />
+            <div class="category-filters">
+                {% for cat in categories %}
+                <a href="{{ url_for('events_page', category=cat) }}"
+                   class="filter-btn {% if selected_category == cat %}active{% endif %}">{{ cat }}</a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Events Grid -->
+        <div class="event-grid" id="eventsGrid">
+            {% for event in events %}
+            <article class="event-card" data-name="{{ event.name|lower }}"
+                     data-category="{{ event.category|lower }}">
+                <div class="event-card-header">
+                    <span class="event-category cat-{{ event.category|lower }}">{{ event.category }}</span>
+                    <span class="event-rsvp">{{ event.rsvp_count }} RSVPs</span>
+                </div>
+                <h3 class="event-name">{{ event.name }}</h3>
+                <div class="event-meta">
+                    <span>📅 {{ event.date }}</span>
+                    <span>🕐 {{ event.time }}</span>
+                </div>
+                <p class="event-venue">📍 {{ event.venue }}</p>
+                <p class="event-desc">{{ event.description }}</p>
+                <a href="{{ url_for('register', event=event.id) }}" class="btn btn-primary btn-sm">Register</a>
+            </article>
+            {% endfor %}
+        </div>
+
+        {% if not events %}
+        <div class="empty-state">
+            <p>😕 No events found. Try a different search or category.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

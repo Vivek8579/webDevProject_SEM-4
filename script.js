@@ -1,198 +1,130 @@
-const questions = [
-  {
-    text: "What is the capital of France?",
-    options: ["Paris", "London", "Berlin", "Madrid"],
-    answer: 0
-  },
-  {
-    text: "What is the capital of Germany?",
-    options: ["Berlin", "London", "Madrid", "Paris"],
-    answer: 0
-  },
-  {
-    text: "What is the capital of Italy?",
-    options: ["Rome", "London", "Madrid", "Paris"],
-    answer: 0
-  },
-  {
-    text: "What is the capital of Spain?",
-    options: ["Madrid", "London", "Berlin", "Paris"],
-    answer: 3
-  },
-  {
-    text: "What is the capital of Portugal?",
-    options: ["Lisbon", "London", "Berlin", "Paris"],
-    answer: 0
-  },
-  {
-    text: "What is the capital of Greece?",
-    options: ["Athens", "London", "Berlin", "Paris"],
-    answer: 0
-  },
-  {
-    text: "What is the capital of Japan?",
-    options: ["Tokyo", "London", "Berlin", "Paris"],
-    answer: 0
-  },
-  {
-    text: "What is the capital of China?",
-    options: ["Beijing", "London", "Berlin", "Paris"],
-    answer: 0
-  },
-  {
-    text: "What is the capital of India?",
-    options: ["New Delhi", "London", "Berlin", "Paris"],
-    answer: 0
-  },
-  {
-    text: "What is the capital of Brazil?",
-    options: ["Brasilia", "London", "Berlin", "Paris"],
-    answer: 0
-  },
-  
+/*
+=============================================================
+ Event Management Website — Client-Side JavaScript
+ File    : static/js/script.js
+ Date    : 2026-04-02
+=============================================================
+*/
 
+// ── Dark / Light Theme Toggle ─────────────────────────
+const themeToggle = document.getElementById("themeToggle");
+const html = document.documentElement;
+const savedTheme = localStorage.getItem("ems_theme") || "light";
+html.setAttribute("data-theme", savedTheme);
+themeToggle.textContent = savedTheme === "dark" ? "☀️" : "🌙";
 
+themeToggle.addEventListener("click", () => {
+    const current = html.getAttribute("data-theme");
+    const next = current === "dark" ? "light" : "dark";
+    html.setAttribute("data-theme", next);
+    localStorage.setItem("ems_theme", next);
+    themeToggle.textContent = next === "dark" ? "☀️" : "🌙";
+});
 
-]
-
-const questionText = document.querySelector(".question-text")
-const optionsBox = document.querySelector(".options")
-const helperText = document.querySelector(".helper-text")
-const progressFill = document.querySelector(".progress-fill")
-const progressText = document.querySelector(".progress-text")
-const quizCard = document.querySelector(".quiz-card")
-const resultCard = document.querySelector(".result-card")
-const resultTitle = document.querySelector(".result-title")
-const resultScore = document.querySelector(".result-score")
-const resultMessage = document.querySelector(".result-message")
-const nextBtn = document.getElementById("nextBtn")
-const restartBtn = document.getElementById("restartBtn")
-const playAgainBtn = document.getElementById("playAgainBtn")
-
-let current = 0
-let score = 0
-let locked = false
-let selectedIndex = null
-
-function setProgress() {
-  const step = (current / questions.length) * 100
-  progressFill.style.width = `${Math.round(step)}%`
-  progressText.textContent = `${current}/${questions.length}`
+// ── Mobile Menu Toggle ────────────────────────────────
+const menuBtn = document.getElementById("menuBtn");
+const navLinks = document.getElementById("navLinks");
+if (menuBtn && navLinks) {
+    menuBtn.addEventListener("click", () => {
+        navLinks.classList.toggle("open");
+        menuBtn.textContent = navLinks.classList.contains("open") ? "✕" : "☰";
+    });
 }
 
-function renderQuestion() {
-  const item = questions[current]
-  quizCard.classList.remove("fade")
-  void quizCard.offsetWidth
-  quizCard.classList.add("fade")
-  questionText.textContent = item.text
-  optionsBox.innerHTML = ""
-  helperText.textContent = "Tap an option to lock in your answer."
-  locked = false
-  selectedIndex = null
-  nextBtn.disabled = true
-  nextBtn.textContent = current === questions.length - 1 ? "Submit" : "Next"
-  item.options.forEach((label, index) => {
-    const btn = document.createElement("button")
-    btn.className = "option"
-    btn.type = "button"
-    btn.setAttribute("role", "radio")
-    btn.setAttribute("aria-checked", "false")
-    btn.innerHTML = `<span>${String.fromCharCode(65 + index)}</span><p>${label}</p>`
-    btn.addEventListener("click", () => handleSelect(index, btn))
-    optionsBox.appendChild(btn)
-  })
-  setProgress()
+// ── Live Search (Events Page, no reload) ──────────────
+const searchInput = document.getElementById("searchInput");
+const eventsGrid = document.getElementById("eventsGrid");
+if (searchInput && eventsGrid) {
+    searchInput.addEventListener("input", () => {
+        const query = searchInput.value.toLowerCase().trim();
+        const cards = eventsGrid.querySelectorAll(".event-card");
+        cards.forEach(card => {
+            const name = card.getAttribute("data-name") || "";
+            const cat  = card.getAttribute("data-category") || "";
+            const visible = name.includes(query) || cat.includes(query);
+            card.style.display = visible ? "" : "none";
+        });
+    });
 }
 
-function handleSelect(index, btn) {
-  if (locked) return
-  const optionButtons = [...document.querySelectorAll(".option")]
-  optionButtons.forEach(o => {
-    o.classList.remove("selected")
-    o.setAttribute("aria-checked", "false")
-  })
-  btn.classList.add("selected")
-  btn.setAttribute("aria-checked", "true")
-  selectedIndex = index
-  helperText.textContent = "Ready? Hit next to check your answer."
-  nextBtn.disabled = false
+// ── Registration Form Validation ──────────────────────
+const regForm = document.getElementById("regForm");
+if (regForm) {
+    regForm.addEventListener("submit", function(e) {
+        let valid = true;
+        clearErrors();
+
+        const name = document.getElementById("full_name");
+        const email = document.getElementById("email");
+        const phone = document.getElementById("phone");
+        const eventId = document.getElementById("event_id");
+        const tickets = document.getElementById("tickets");
+
+        if (!name.value.trim()) {
+            showError("err_name", "Full name is required", name);
+            valid = false;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+            showError("err_email", "Valid email is required", email);
+            valid = false;
+        }
+        if (!/^\d{10,15}$/.test(phone.value)) {
+            showError("err_phone", "Phone must be 10–15 digits", phone);
+            valid = false;
+        }
+        if (!eventId.value) {
+            showError("err_event", "Please select an event", eventId);
+            valid = false;
+        }
+        if (!tickets.value || parseInt(tickets.value) < 1) {
+            showError("err_tickets", "At least 1 ticket required", tickets);
+            valid = false;
+        }
+
+        if (!valid) e.preventDefault();
+    });
 }
 
-function revealAnswer() {
-  const item = questions[current]
-  const optionButtons = [...document.querySelectorAll(".option")]
-  optionButtons.forEach((btn, index) => {
-    if (index === item.answer) btn.classList.add("correct")
-    if (index === selectedIndex && index !== item.answer) btn.classList.add("wrong")
-  })
-  if (selectedIndex === item.answer) {
-    score++
-    helperText.textContent = "Nice, that was correct."
-  } else {
-    helperText.textContent = "Good try. Watch how the correct one lights up."
-  }
+function showError(spanId, msg, inputEl) {
+    const span = document.getElementById(spanId);
+    if (span) span.textContent = msg;
+    if (inputEl) inputEl.classList.add("input-error");
+}
+function clearErrors() {
+    document.querySelectorAll(".error-msg").forEach(s => s.textContent = "");
+    document.querySelectorAll(".input-error").forEach(i => i.classList.remove("input-error"));
 }
 
-function handleNext() {
-  if (!locked) {
-    locked = true
-    revealAnswer()
-    nextBtn.textContent = current === questions.length - 1 ? "Finish" : "Continue"
-    return
-  }
-  if (current < questions.length - 1) {
-    current++
-    renderQuestion()
-  } else {
-    showResult()
-  }
+// ── Admin Edit Modal ──────────────────────────────────
+function openEditModal(id, name, date, time, venue, desc, cat, img) {
+    const modal = document.getElementById("editModal");
+    const form  = document.getElementById("editForm");
+    form.action = "/admin/edit/" + id;
+    document.getElementById("edit_name").value = name;
+    document.getElementById("edit_date").value = date;
+    document.getElementById("edit_time").value = time;
+    document.getElementById("edit_venue").value = venue;
+    document.getElementById("edit_desc").value  = desc;
+    document.getElementById("edit_category").value = cat;
+    document.getElementById("edit_image").value = img;
+    modal.classList.add("active");
+}
+function closeEditModal() {
+    document.getElementById("editModal").classList.remove("active");
+}
+// Close modal on overlay click
+const editModal = document.getElementById("editModal");
+if (editModal) {
+    editModal.addEventListener("click", function(e) {
+        if (e.target === this) closeEditModal();
+    });
 }
 
-function scoreMessage(ratio) {
-  if (ratio === 1) return "Excellent, a perfect brain run."
-  if (ratio >= 0.7) return "Great job, you are thinking like a developer."
-  if (ratio >= 0.4) return "Good, a bit more practice will make it shine."
-  return "Try again, every attempt wires your brain better."
-}
-
-function showResult() {
-  const ratio = score / questions.length
-  resultTitle.textContent = ratio >= 0.7 ? "Well played!" : "You can beat this."
-  resultScore.textContent = `You scored ${score} / ${questions.length}`
-  resultMessage.textContent = scoreMessage(ratio)
-  quizCard.hidden = true
-  resultCard.hidden = false
-  resultCard.classList.add("show")
-}
-
-function resetQuiz() {
-  current = 0
-  score = 0
-  locked = false
-  selectedIndex = null
-  resultCard.hidden = true
-  quizCard.hidden = false
-  helperText.textContent = "Tap an option to lock in your answer."
-  restartBtn.style.opacity = "1"
-  restartBtn.style.pointerEvents = "auto"
-  renderQuestion()
-}
-
-const navLinks = document.querySelectorAll(".nav-link")
-
-function scrollToSection(id) {
-  const el = id === "quiz" ? quizCard : document.getElementById(id)
-  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" })
-}
-
-navLinks.forEach(btn => {
-  btn.addEventListener("click", () => scrollToSection(btn.dataset.target))
-})
-
-nextBtn.addEventListener("click", handleNext)
-restartBtn.addEventListener("click", resetQuiz)
-playAgainBtn.addEventListener("click", resetQuiz)
-
-resetQuiz()
-
+// ── Auto-dismiss flash messages after 5s ──────────────
+document.querySelectorAll(".flash").forEach(el => {
+    setTimeout(() => {
+        el.style.opacity = "0";
+        el.style.transform = "translateY(-10px)";
+        setTimeout(() => el.remove(), 300);
+    }, 5000);
+});

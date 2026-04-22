@@ -1,0 +1,62 @@
+<!--
+=============================================================
+ Event Management Website — Registration Form
+ File    : templates/register.html
+ Date    : 2026-04-02
+=============================================================
+-->
+{% extends "base.html" %}
+{% block title %}Register — EventHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container form-container">
+        <h1 class="section-title">Event Registration</h1>
+        <p class="section-subtitle">Fill in your details to reserve your spot</p>
+
+        <form action="{{ url_for('register') }}" method="POST" class="reg-form" id="regForm" novalidate>
+            <div class="form-group">
+                <label for="full_name">Full Name</label>
+                <input type="text" id="full_name" name="full_name" placeholder="John Doe"
+                       value="{{ form.get('full_name','') }}" required />
+                <span class="error-msg" id="err_name"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="john@example.com"
+                       value="{{ form.get('email','') }}" required />
+                <span class="error-msg" id="err_email"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" placeholder="1234567890"
+                       value="{{ form.get('phone','') }}" required />
+                <span class="error-msg" id="err_phone"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="event_id">Select Event</label>
+                <select id="event_id" name="event_id" required>
+                    <option value="">Choose an event</option>
+                    {% for ev in events %}
+                    <option value="{{ ev.id }}" {% if form.get('event_id')==ev.id|string %}selected{% endif %}>
+                        {{ ev.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <span class="error-msg" id="err_event"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="tickets">Number of Tickets</label>
+                <input type="number" id="tickets" name="tickets" min="1" max="10"
+                       value="{{ form.get('tickets','1') }}" required />
+                <span class="error-msg" id="err_tickets"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Complete Registration</button>
+        </form>
+    </div>
+</section>
+{% endblock %}
