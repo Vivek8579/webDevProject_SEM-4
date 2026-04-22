@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Interactive Quiz</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app" id="top">
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-mark">IQ</span>
+        <div class="brand-text">
+          <h1>Interactive Quiz</h1>
+          <p>Test your brain with quick multiple-choice questions.</p>
+        </div>
+      </div>
+      <nav class="app-nav">
+        <button class="nav-link" type="button" data-target="top">Home</button>
+        <button class="nav-link" type="button" data-target="quiz">Quiz</button>
+        <button class="nav-link" type="button" data-target="about">About</button>
+      </nav>
+    </header>
+    <main class="app-main" id="quiz">
+      <section class="quiz-card" aria-live="polite">
+        <div class="quiz-top">
+          <div class="progress">
+            <div class="progress-bar">
+              <div class="progress-fill"></div>
+            </div>
+            <span class="progress-text"></span>
+          </div>
+        </div>
+        <section class="question-area">
+          <h2 class="question-text"></h2>
+          <div class="options" role="radiogroup"></div>
+        </section>
+        <section class="status-area">
+          <p class="helper-text"></p>
+        </section>
+        <footer class="controls">
+          <button class="btn ghost" id="restartBtn" type="button">Restart</button>
+          <button class="btn primary" id="nextBtn" type="button">Next</button>
+        </footer>
+      </section>
+      <section class="result-card" hidden>
+        <div class="result-inner">
+          <h2 class="result-title"></h2>
+          <p class="result-score"></p>
+          <p class="result-message"></p>
+          <button class="btn primary" id="playAgainBtn" type="button">Play again</button>
+        </div>
+      </section>
+    </main>
+    <section class="about-card" id="about">
+      <h2>About this quiz</h2>
+      <p>This mini quiz helps you practice core web concepts in a fast, focused way.</p>
+      <p>Each question gives instant visual feedback so your brain remembers better.</p>
+    </section>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
