@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Contact List</h2>
+<form method="GET" action="/">
+    <input type="text" name="search" placeholder="Search by name or phone...">
+    <button type="submit">Search</button>
+</form>
+<br>
+<table border="1" width="100%">
+    <tr>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Email</th>
+        <th>Actions</th>
+    </tr>
+    {% for contact in contacts %}
+    <tr>
+        <td>{{ contact.name }}</td>
+        <td>{{ contact.phone }}</td>
+        <td>{{ contact.email }}</td>
+        <td>
+            <a href="{{ url_for('edit_contact', contact_id=contact.id) }}">Edit</a> | 
+            <a href="{{ url_for('delete_contact', contact_id=contact.id) }}" onclick="return confirm('Delete this contact?')">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
